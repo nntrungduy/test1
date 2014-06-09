@@ -77,6 +77,12 @@
                                     <action selector="btnStart:" destination="vXZ-lx-hvc" eventType="touchDown" id="a8c-Jf-esa"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BSe-dk-76e">
+                                <rect key="frame" x="31" y="387" width="253" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -88,6 +94,7 @@
                         <outlet property="labelLatitude" destination="ZxR-IA-yqm" id="uXa-nf-3aU"/>
                         <outlet property="labelLongitude" destination="yOf-Sx-Kdq" id="l7k-X8-sIX"/>
                         <outlet property="labelTime" destination="PIH-sn-a2S" id="qmf-3E-Uzh"/>
+                        <outlet property="labelUDID" destination="BSe-dk-76e" id="RYf-A1-Wka"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

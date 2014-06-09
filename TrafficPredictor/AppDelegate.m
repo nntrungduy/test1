@@ -9,6 +9,9 @@
 #import "AppDelegate.h"
 
 @implementation AppDelegate
+{
+    NSTimer * timer;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -26,8 +29,32 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+
+    //create timer to handle when update location in background
+    timer = [[NSTimer alloc]init ];
     
-    }
+    UIApplication *app = [UIApplication sharedApplication];
+    UIBackgroundTaskIdentifier bgTask = 0;
+    
+    timer = [NSTimer scheduledTimerWithTimeInterval:4 target:self  selector:@selector(CallInterval) userInfo:nil repeats:YES];
+    
+    //if app enter background
+    bgTask = [app beginBackgroundTaskWithExpirationHandler:^{
+        [app endBackgroundTask:bgTask];
+    }];
+    
+}
+              
+//trigger when timer start in background mode
+-(void) CallInterval
+{
+    NSDate *now = [NSDate date];
+	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+	[dateFormatter setDateFormat:@"yyyy-MM-dd' 'HH:mm:ss"];
+	NSString * myTime = [dateFormatter stringFromDate:now];
+    
+    NSLog(@"tik tok %@",myTime);
+}
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
