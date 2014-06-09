@@ -23,6 +23,7 @@
     CLLocationManager *mgr;
     NSString * UUID;
     NSString *myTime;
+    UIAlertView *alert;
 }
 - (void)viewDidLoad
 {
@@ -33,7 +34,11 @@
     mgr.desiredAccuracy = kCLLocationAccuracyBest;
     
    //set icon background
-    
+    alert = [[UIAlertView alloc]initWithTitle: @"Confirmation"
+                                                   message: @"Your data has been sent"
+                                                  delegate: self
+                                         cancelButtonTitle:@"YOLO"
+                                         otherButtonTitles:nil,nil];
     
     
     //set background opacity
@@ -77,27 +82,50 @@
 //========================================Button Send Event=====================================
 
 - (IBAction)btnSend:(id)sender {
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
-    
-    NSURL *URL = [NSURL URLWithString:@"http://gpsdata.jvn.edu.vn/upload_file.php"];
-    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+   
     
     NSString* docPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)objectAtIndex:0] ;
     
     NSLog(@"%@",docPath);
+    
     NSString* txtFile = [docPath stringByAppendingPathComponent:@"GPS.txt"];
     
+    NSData * data = [NSData dataWithContentsOfFile:txtFile];
     
-    NSURL *filePath = [NSURL fileURLWithPath:txtFile];
-    NSURLSessionUploadTask *uploadTask = [manager uploadTaskWithRequest:request fromFile:filePath progress:nil completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
-        } else {
-            NSLog(@"Success: %@ %@", response, responseObject);
-        }
-    }];
-    [uploadTask resume];
+    NSString * urlString = @"http://gpsdata.jvn.edu.vn/GPSdata/upload04.php";
+    
+    NSMutableURLRequest * request = [[NSMutableURLRequest alloc] init] ;
+    
+    [request setURL:[NSURL URLWithString:urlString]];
+    
+    [request setHTTPMethod:@"POST"];
+    
+    NSString *boundary = [NSString stringWithString:@"---------------------------14737809831466499882746641449"];
+	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
+	[request addValue:contentType forHTTPHeaderField:@"Content-Type"];
+	
+	NSMutableData *body = [NSMutableData data];
+	[body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    
+    NSString * str = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"userfile\"; filename=\"%@\"\r\n",txtFile];
+    [body appendData:[[NSString stringWithString:str] dataUsingEncoding:NSUTF8StringEncoding]];
+	
+    
+    [body appendData:[[NSString stringWithString:@"Content-Type: application/octet-stream\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+	[body appendData:[NSData dataWithData:data]];
+	[body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+	[request setHTTPBody:body];
+	
+	NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+	NSString *returnString = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
+	
+	NSLog(@"%@",returnString);
+    
+    [WriteFile clearGPS];
+    
+    
+    [alert show];
     
 }
 
